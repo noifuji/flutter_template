@@ -1,0 +1,6 @@
+{
+  "appTitle": "Flutter App Template",
+  "appBarTitle": "Counter",
+  "counterDescription": "You have pushed the button this many times:",
+  "incrementTip": "Increment"
+}
