@@ -1,14 +1,15 @@
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_template/domain/counter_repository.dart';
 import 'package:flutter_template/domain/increment_usecase.dart';
 
+import '../model/click_count.dart';
+
 class CounterViewModel extends ChangeNotifier {
-  int _counter = 0;
+  late ClickCount _counter;
   final CounterRepository _counterRepository;
 
-  int get counter => _counter;
+  ClickCount get counter => _counter;
 
   CounterViewModel(this._counterRepository);
 

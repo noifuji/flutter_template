@@ -1,14 +1,16 @@
 import 'package:flutter_template/domain/usecase.dart';
 
-class IncrementUseCase extends UseCase<int> {
+import '../model/click_count.dart';
 
-  final int _value;
+class IncrementUseCase extends UseCase<ClickCount> {
 
-  IncrementUseCase(this._value);
+  final ClickCount _current;
+
+  IncrementUseCase(this._current);
 
   @override
-  int call() {
-    return _value + 1;
+  ClickCount call() {
+    return ClickCount(_current.value + 1, DateTime.now());
   }
 
 

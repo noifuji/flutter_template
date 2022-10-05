@@ -1,4 +1,6 @@
+import '../model/click_count.dart';
+
 abstract class CounterRepository {
-  Future<int> loadCounter();
-  Future<void> saveCounter(int counter);
+  Future<ClickCount> loadCounter();
+  Future<void> saveCounter(ClickCount counter);
 }

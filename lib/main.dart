@@ -4,8 +4,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_template/data/counter_local_data_source.dart';
 import 'package:flutter_template/data/counter_repository_impl.dart';
 import 'package:flutter_template/view/counter_screen.dart';
-import 'package:flutter_template/viewmodel/app_ui_settings.dart';
 import 'package:flutter_template/viewmodel/counter_viewmodel.dart';
+import 'package:flutter_template/viewmodel/language_viewmodel.dart';
+import 'package:flutter_template/viewmodel/theme_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,23 +14,45 @@ void main() {
   runApp(MyApp());
 }
 
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => MyAppState();
+}
+
 //ignore: must_be_immutable
-class MyApp extends StatelessWidget {
+class MyAppState extends State<MyApp> {
   late SharedPreferences _prefs;
   late CounterViewModel _counterViewModel;
-  late AppUISettings _appUISettings;
+  late LanguageViewModel _languageViewModel;
+  late ThemeViewModel _themeViewModel;
+  late Future<bool> _initialize;
 
-  MyApp({Key? key}) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    _initialize = _initApp();
+  }
 
   //Initialize App
   Future<bool> _initApp() async {
     _prefs = await SharedPreferences.getInstance();
-    CounterRepositoryImpl counterRepository = CounterRepositoryImpl(
-        CounterLocalDataSource(_prefs));
+    CounterRepositoryImpl counterRepository =
+        CounterRepositoryImpl(CounterLocalDataSource(_prefs));
     _counterViewModel = CounterViewModel(counterRepository);
     await _counterViewModel.init();
 
-    _appUISettings = AppUISettings(_prefs);
+    _languageViewModel = LanguageViewModel(
+        sharedPreferences: _prefs,
+        systemLocales: WidgetsBinding.instance.window.locales,
+        supportedLocales: AppLocalizations.supportedLocales);
+
+    _themeViewModel =
+        ThemeViewModel(sharedPreferences: _prefs, supportedThemes: {
+      "dark": ThemeData(brightness: Brightness.dark),
+      "light": ThemeData(brightness: Brightness.light)
+    });
 
     return Future.value(true);
   }
@@ -38,24 +61,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          final breakpoint = Breakpoint.fromConstraints(constraints);
+      final breakpoint = Breakpoint.fromConstraints(constraints);
 
-          if(breakpoint.columns <= 4) {
-            //Handset
-            return _createDesktopLayout();
-          } else if(breakpoint.columns <= 8) {
-            //Tablet
-            return _createDesktopLayout();
-          } else {
-            //Desktop
-            return _createDesktopLayout();
-          }
-        });
+      if (breakpoint.columns <= 4) {
+        //Handset
+        return _createDesktopLayout();
+      } else if (breakpoint.columns <= 8) {
+        //Tablet
+        return _createDesktopLayout();
+      } else {
+        //Desktop
+        return _createDesktopLayout();
+      }
+    });
   }
 
   Widget _createDesktopLayout() {
     return FutureBuilder<bool>(
-        future: _initApp(),
+        future: _initialize,
         builder: (context, dataSnapshot) {
           if (dataSnapshot.connectionState == ConnectionState.waiting) {
             //初期ロード中のロード画面
@@ -69,15 +92,20 @@ class MyApp extends StatelessWidget {
             return MultiProvider(
                 providers: [
                   ChangeNotifierProvider.value(value: _counterViewModel),
+                  ChangeNotifierProvider.value(value: _languageViewModel),
+                  ChangeNotifierProvider.value(value: _themeViewModel),
                 ],
                 child: Builder(
-                    builder: (context) =>
-                        MaterialApp(
-                          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
-                          locale: _appUISettings.locale,
-                          localizationsDelegates: AppLocalizations.localizationsDelegates,
+                    builder: (context) => MaterialApp(
+                          onGenerateTitle: (context) =>
+                              AppLocalizations.of(context)!.appTitle,
+                          locale: Provider.of<LanguageViewModel>(context)
+                              .getLocale(),
+                          localizationsDelegates:
+                              AppLocalizations.localizationsDelegates,
                           supportedLocales: AppLocalizations.supportedLocales,
-                          theme: _appUISettings.theme,
+                          theme:
+                              Provider.of<ThemeViewModel>(context).getTheme(),
                           home: const CounterScreen(),
                         )));
           }
