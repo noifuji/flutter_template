@@ -1,5 +1,10 @@
-import 'package:flutter_template/domain/entity/click_count.dart';
+// Package imports:
+
+// Package imports:
 import 'package:intl/intl.dart';
+
+// Project imports:
+import 'package:flutter_template/domain/entity/click_count.dart';
 
 final _dateFormatter = DateFormat('y/M/d HH:mm:s.S');
 
@@ -15,6 +20,7 @@ ClickCountEntity modelToData(ClickCount count) {
 
 ClickCount dataToModel(ClickCountEntity count) {
   return ClickCount(
-      value: count.value,
-      updateDate: _dateFormatter.parseStrict(count.updateDate));
+    value: count.value,
+    updateDate: _dateFormatter.parseStrict(count.updateDate),
+  );
 }

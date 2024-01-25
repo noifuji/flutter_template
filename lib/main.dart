@@ -16,7 +16,7 @@ import 'package:flutter_template/viewmodel/app_theme.dart';
 import 'package:flutter_template/viewmodel/counter_viewmodel.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -43,7 +43,7 @@ class MyAppState extends State<MyApp> {
   //Initialize App
   Future<bool> _initApp() async {
     _prefs = await SharedPreferences.getInstance();
-    CounterRepositoryImpl counterRepository =
+    final counterRepository =
         CounterRepositoryImpl(CounterLocalDataSource(_prefs));
     _counterViewModel = CounterViewModel(counterRepository);
     await _counterViewModel.init();
@@ -57,53 +57,57 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      final breakpoint = Breakpoint.fromConstraints(constraints);
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final breakpoint = Breakpoint.fromConstraints(constraints);
 
-      if (breakpoint.columns <= 4) {
-        //Handset
-        return _createDesktopLayout();
-      } else if (breakpoint.columns <= 8) {
-        //Tablet
-        return _createDesktopLayout();
-      } else {
-        //Desktop
-        return _createDesktopLayout();
-      }
-    });
+        if (breakpoint.columns <= 4) {
+          //Handset
+          return _createDesktopLayout();
+        } else if (breakpoint.columns <= 8) {
+          //Tablet
+          return _createDesktopLayout();
+        } else {
+          //Desktop
+          return _createDesktopLayout();
+        }
+      },
+    );
   }
 
   Widget _createDesktopLayout() {
     return FutureBuilder<bool>(
-        future: _initialize,
-        builder: (context, dataSnapshot) {
-          if (dataSnapshot.connectionState == ConnectionState.waiting) {
-            //初期ロード中のロード画面
-            return const MaterialApp(home: Center());
-          } else if (dataSnapshot.error != null) {
-            //初期ロードに失敗した場合に表示するエラー画面
-            return MaterialApp(
-                home: Center(child: Text(dataSnapshot.error.toString())));
-          } else {
-            //初期ロード完了
-            return MultiProvider(
-                providers: [
-                  ChangeNotifierProvider.value(value: _counterViewModel),
-                  ChangeNotifierProvider.value(value: _appLanguage),
-                  ChangeNotifierProvider.value(value: _appTheme),
-                ],
-                child: Builder(
-                    builder: (context) => MaterialApp(
-                          onGenerateTitle: (context) =>
-                              AppLocalizations.of(context)!.appTitle,
-                          locale: Provider.of<AppLanguage>(context).appLocale,
-                          localizationsDelegates:
-                              AppLocalizations.localizationsDelegates,
-                          supportedLocales: AppLocalizations.supportedLocales,
-                          theme: Provider.of<AppTheme>(context).theme,
-                          home: const CounterScreen(),
-                        )));
-          }
-        });
+      future: _initialize,
+      builder: (context, dataSnapshot) {
+        if (dataSnapshot.connectionState == ConnectionState.waiting) {
+          //初期ロード中のロード画面
+          return const MaterialApp(home: Center());
+        } else if (dataSnapshot.error != null) {
+          //初期ロードに失敗した場合に表示するエラー画面
+          return MaterialApp(
+            home: Center(child: Text(dataSnapshot.error.toString())),
+          );
+        } else {
+          //初期ロード完了
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: _counterViewModel),
+              ChangeNotifierProvider.value(value: _appLanguage),
+              ChangeNotifierProvider.value(value: _appTheme),
+            ],
+            child: Builder(
+              builder: (context) => MaterialApp(
+                onGenerateTitle: (context) =>
+                    AppLocalizations.of(context)!.appTitle,
+                locale: Provider.of<AppLanguage>(context).appLocale,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                theme: Provider.of<AppTheme>(context).theme,
+                home: const CounterScreen(),
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 }

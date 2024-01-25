@@ -48,7 +48,7 @@ linter:
     - combinators_ordering
     - comment_references
     - deprecated_consistency
-    - directives_ordering
+    #- directives_ordering
     - eol_at_end_of_file
     - flutter_style_todos
     #- implicit_reopen
@@ -78,7 +78,7 @@ linter:
     - require_trailing_commas
     - sized_box_shrink_expand
     - sort_constructors_first
-    - sort_pub_dependencies
+    #- sort_pub_dependencies
     - sort_unnamed_constructors_first
     - test_types_in_equals
     - throw_in_finally

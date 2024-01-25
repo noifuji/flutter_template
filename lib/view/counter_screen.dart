@@ -7,14 +7,13 @@ import 'package:provider/provider.dart';
 
 // Project imports:
 import 'package:flutter_template/viewmodel/counter_viewmodel.dart';
-import '../domain/entity/click_count.dart';
 
 class CounterScreen extends StatelessWidget {
   const CounterScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ClickCount cv = Provider.of<CounterViewModel>(context).counter;
+    final cv = Provider.of<CounterViewModel>(context).counter;
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.appBarTitle),
@@ -29,9 +28,7 @@ class CounterScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text(AppLocalizations.of(context)!.updateDateDescription),
-            Text(cv.updateDate == null
-                ? AppLocalizations.of(context)!.noData
-                : cv.updateDate.toString()),
+            Text(cv.updateDate.toString()),
           ],
         ),
       ),

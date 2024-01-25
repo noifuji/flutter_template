@@ -4,7 +4,6 @@ import 'package:flutter_template/domain/counter_repository.dart';
 import '../domain/entity/click_count.dart';
 
 class CounterRepositoryImpl extends CounterRepository {
-
   CounterRepositoryImpl(this._counterLocalDataSource);
   final CounterLocalDataSource _counterLocalDataSource;
 
