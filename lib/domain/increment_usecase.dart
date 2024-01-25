@@ -1,17 +1,9 @@
-import 'package:flutter_template/domain/usecase.dart';
+// Project imports:
+import 'entity/click_count.dart';
 
-import '../model/click_count.dart';
-
-class IncrementUseCase extends UseCase<ClickCount> {
-
-  final ClickCount _current;
-
-  IncrementUseCase(this._current);
-
-  @override
-  ClickCount call() {
-    return ClickCount(_current.value + 1, DateTime.now());
+class IncrementUseCase {
+  ClickCount call(ClickCount current) {
+    return current.copyWith(
+        value: current.value + 1, updateDate: DateTime.now(),);
   }
-
-
 }

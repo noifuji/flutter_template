@@ -1,14 +1,19 @@
-import 'package:breakpoint/breakpoint.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:breakpoint/breakpoint.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// Project imports:
 import 'package:flutter_template/data/counter_local_data_source.dart';
 import 'package:flutter_template/data/counter_repository_impl.dart';
 import 'package:flutter_template/view/counter_screen.dart';
+import 'package:flutter_template/viewmodel/app_language.dart';
+import 'package:flutter_template/viewmodel/app_theme.dart';
 import 'package:flutter_template/viewmodel/counter_viewmodel.dart';
-import 'package:flutter_template/viewmodel/language_viewmodel.dart';
-import 'package:flutter_template/viewmodel/theme_viewmodel.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,8 +30,8 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   late SharedPreferences _prefs;
   late CounterViewModel _counterViewModel;
-  late LanguageViewModel _languageViewModel;
-  late ThemeViewModel _themeViewModel;
+  final AppLanguage _appLanguage = AppLanguage();
+  final AppTheme _appTheme = AppTheme();
   late Future<bool> _initialize;
 
   @override
@@ -43,16 +48,8 @@ class MyAppState extends State<MyApp> {
     _counterViewModel = CounterViewModel(counterRepository);
     await _counterViewModel.init();
 
-    _languageViewModel = LanguageViewModel(
-        sharedPreferences: _prefs,
-        systemLocales: WidgetsBinding.instance.window.locales,
-        supportedLocales: AppLocalizations.supportedLocales);
-
-    _themeViewModel =
-        ThemeViewModel(sharedPreferences: _prefs, supportedThemes: {
-      "dark": ThemeData(brightness: Brightness.dark),
-      "light": ThemeData(brightness: Brightness.light)
-    });
+    await _appLanguage.loadLocale();
+    await _appTheme.loadTheme();
 
     return Future.value(true);
   }
@@ -92,20 +89,18 @@ class MyAppState extends State<MyApp> {
             return MultiProvider(
                 providers: [
                   ChangeNotifierProvider.value(value: _counterViewModel),
-                  ChangeNotifierProvider.value(value: _languageViewModel),
-                  ChangeNotifierProvider.value(value: _themeViewModel),
+                  ChangeNotifierProvider.value(value: _appLanguage),
+                  ChangeNotifierProvider.value(value: _appTheme),
                 ],
                 child: Builder(
                     builder: (context) => MaterialApp(
                           onGenerateTitle: (context) =>
                               AppLocalizations.of(context)!.appTitle,
-                          locale: Provider.of<LanguageViewModel>(context)
-                              .getLocale(),
+                          locale: Provider.of<AppLanguage>(context).appLocale,
                           localizationsDelegates:
                               AppLocalizations.localizationsDelegates,
                           supportedLocales: AppLocalizations.supportedLocales,
-                          theme:
-                              Provider.of<ThemeViewModel>(context).getTheme(),
+                          theme: Provider.of<AppTheme>(context).theme,
                           home: const CounterScreen(),
                         )));
           }
