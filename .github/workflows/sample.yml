@@ -7,19 +7,15 @@ jobs:
   say_hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Download Android keystore
-        id: android_keystore
-        uses: timheuer/base64-to-file@v1.0.3
-        with:
-          fileName: sample.txt
-          encodedString: ${{ secrets.SAMPLE_BASE64 }}
-      - name: print
-        run: echo ${{ steps.android_keystore.outputs.filePath }}
+      - name: make artifact dir
+        run: mkdir /home/runner/work/artifact
+      - name: make file
+        run: echo hello > /home/runner/work/artifact/sample.txt
       - name: Upload Android Release
         uses: actions/upload-artifact@v4.3.0
         with:
           name: sample
-          path: steps.android_keystore.outputs.filePath
+          path: /home/runner/work/artifact/sample.txt
           
   deploy:
     needs: [say_hello]
