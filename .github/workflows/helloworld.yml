@@ -61,6 +61,7 @@ jobs:
     steps:
       # モジュールのダウンロード
       - name: Download artifact
+        id: download
         uses: actions/download-artifact@v4
         with:
           name: android-release
@@ -72,4 +73,4 @@ jobs:
           appId: ${{secrets.FIREBASE_APP_ID_ANDROID}}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
           groups: testers
-          file: app-release.aab
+          file: ${{steps.download.outputs.download-path}}/app-release.aab
