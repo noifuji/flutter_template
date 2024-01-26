@@ -14,4 +14,21 @@ jobs:
           fileName: sample.txt
           encodedString: ${{ secrets.SAMPLE_BASE64 }}
       - name: print
-        run: cat ${{ steps.android_keystore.outputs.filePath }}
+        run: echo ${{ steps.android_keystore.outputs.filePath }}
+      - name: Upload Android Release
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: sample
+          path: steps.android_keystore.outputs.filePath
+          
+  deploy:
+    needs: [say_hello]
+    runs-on: ubuntu-latest
+    steps:
+      # モジュールのダウンロード
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sample
+      - name: print
+        run: echo ${{steps.(id名).outputs.download-path}}
