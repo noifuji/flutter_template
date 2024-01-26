@@ -1,0 +1,17 @@
+name: Sample
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  say_hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Android keystore
+        id: android_keystore
+        uses: timheuer/base64-to-file@v1.0.3
+        with:
+          fileName: sample.txt
+          encodedString: ${{ secrets.SAMPLE_BASE64 }}
+      - name: print
+        run: cat sample.txt
