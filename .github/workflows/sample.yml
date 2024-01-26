@@ -27,5 +27,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: sample
+          path: /home/runner/work
       - name: print
         run: echo ${{steps.sample.outputs.download-path}}
