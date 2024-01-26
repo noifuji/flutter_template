@@ -16,7 +16,12 @@ class CounterLocalDataSource {
     final date = _sharedPreferences.getString('updateDate');
 
     if (value == null || date == null) {
-      throw Exception('Failed to load counter');
+      return Future.value(
+        ClickCount(
+          value: 0,
+          updateDate: DateTime.now(),
+        ),
+      );
     }
 
     return Future.value(dataToModel(ClickCountEntity(value, date)));

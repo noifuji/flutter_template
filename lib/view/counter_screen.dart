@@ -14,9 +14,10 @@ class CounterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cv = Provider.of<CounterViewModel>(context).counter;
+    const flavorName = String.fromEnvironment('flavor');
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.appBarTitle),
+        title: Text('${AppLocalizations.of(context)!.appTitle}($flavorName)'),
       ),
       body: Center(
         child: Column(
