@@ -47,13 +47,13 @@ jobs:
           cache: gradle
 
       - name: Start Android Release Build
-        run: flutter build appbundle --release --dart-define-from-file=dart_defines/prod.json
+        run: flutter build apk --release --dart-define-from-file=dart_defines/prod.json
 
       - name: Upload Android Release
         uses: actions/upload-artifact@v4.3.0
         with:
           name: android-release
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: build/app/outputs/flutter-apk/app-release.apk
 
   deploy:
     needs: [build]
@@ -73,4 +73,8 @@ jobs:
           appId: ${{secrets.FIREBASE_APP_ID_ANDROID}}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
           groups: testers
-          file: ${{steps.download.outputs.download-path}}/app-release.aab
+          file: ${{steps.download.outputs.download-path}}/app-release.apk
+          
+      - uses: geekyeggo/delete-artifact@v4
+        with:
+          name: android-release
