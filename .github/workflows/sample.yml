@@ -29,4 +29,4 @@ jobs:
           name: sample
           path: /home/runner/work
       - name: print
-        run: echo ${{steps.sample.outputs.download-path}}
+        run: cat ${{steps.sample.outputs.download-path}}/sample.txt
