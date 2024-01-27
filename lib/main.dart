@@ -80,7 +80,8 @@ class MyAppState extends State<MyApp> {
       builder: (context, dataSnapshot) {
         if (dataSnapshot.connectionState == ConnectionState.waiting) {
           //初期ロード中のロード画面
-          return const MaterialApp(home: Center());
+          return const MaterialApp(home: Scaffold(
+              body: Center()));
         } else if (dataSnapshot.error != null) {
           //初期ロードに失敗した場合に表示するエラー画面
           return MaterialApp(
