@@ -2,6 +2,7 @@ name: Check Code Format
 
 on:
   pull_request:
+    types: [opened, synchronize]
     branches:
         - 'develop'
 
