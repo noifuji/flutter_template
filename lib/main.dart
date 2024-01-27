@@ -50,8 +50,6 @@ class MyAppState extends State<MyApp> {
 
     await _appLanguage.loadLocale();
     await _appTheme.loadTheme();
-
-    return Future.value(true);
   }
 
   @override
@@ -80,8 +78,11 @@ class MyAppState extends State<MyApp> {
       builder: (context, dataSnapshot) {
         if (dataSnapshot.connectionState == ConnectionState.waiting) {
           //初期ロード中のロード中画面
-          return const MaterialApp(home: Scaffold(
-              body: Center(),),);
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(),
+            ),
+          );
         } else if (dataSnapshot.error != null) {
           //初期ロードに失敗した場合に表示するエラーの画面
           return MaterialApp(
