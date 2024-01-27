@@ -1,4 +1,4 @@
-name: Hello World
+name: Publish Staging App
 
 on: 
   workflow_dispatch:
