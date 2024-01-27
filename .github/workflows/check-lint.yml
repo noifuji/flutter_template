@@ -1,4 +1,4 @@
-name: Publish Staging Apk
+name: Check Code Format
 
 on: 
   pull_request:
