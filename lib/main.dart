@@ -32,7 +32,7 @@ class MyAppState extends State<MyApp> {
   late CounterViewModel _counterViewModel;
   final AppLanguage _appLanguage = AppLanguage();
   final AppTheme _appTheme = AppTheme();
-  late Future<bool> _initialize;
+  late Future<void> _initialize;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class MyAppState extends State<MyApp> {
   }
 
   //Initialize App
-  Future<bool> _initApp() async {
+  Future<void> _initApp() async {
     _prefs = await SharedPreferences.getInstance();
     final counterRepository =
         CounterRepositoryImpl(CounterLocalDataSource(_prefs));
@@ -75,12 +75,13 @@ class MyAppState extends State<MyApp> {
   }
 
   Widget _createDesktopLayout() {
-    return FutureBuilder<bool>(
+    return FutureBuilder<void>(
       future: _initialize,
       builder: (context, dataSnapshot) {
         if (dataSnapshot.connectionState == ConnectionState.waiting) {
           //初期ロード中のロード画面
-          return const MaterialApp(home: Center());
+          return const MaterialApp(home: Scaffold(
+              body: Center(),),);
         } else if (dataSnapshot.error != null) {
           //初期ロードに失敗した場合に表示するエラー画面
           return MaterialApp(
