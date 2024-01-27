@@ -59,13 +59,13 @@ class MyAppState extends State<MyApp> {
         final breakpoint = Breakpoint.fromConstraints(constraints);
 
         if (breakpoint.columns <= 4) {
-          //Handset
+          //Handsets
           return _createDesktopLayout();
         } else if (breakpoint.columns <= 8) {
-          //Tablet
+          //Tablets
           return _createDesktopLayout();
         } else {
-          //Desktop
+          //Desktops
           return _createDesktopLayout();
         }
       },
