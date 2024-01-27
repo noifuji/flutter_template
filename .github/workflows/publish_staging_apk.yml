@@ -1,4 +1,4 @@
-name: Publish Staging App
+name: Publish Staging Apk
 
 on: 
   workflow_dispatch:
