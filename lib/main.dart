@@ -84,7 +84,11 @@ class MyAppState extends State<MyApp> {
         } else if (dataSnapshot.error != null) {
           //初期ロードに失敗した場合に表示するエラー画面
           return MaterialApp(
-            home: Center(child: Text(dataSnapshot.error.toString())),
+            home: Scaffold(
+              body: Center(
+                child: Text(dataSnapshot.error.toString()),
+              ),
+            ),
           );
         } else {
           //初期ロード完了
