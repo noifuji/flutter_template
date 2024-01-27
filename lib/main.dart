@@ -1,17 +1,22 @@
-import 'package:breakpoint/breakpoint.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:breakpoint/breakpoint.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_template/data/counter_local_data_source.dart';
-import 'package:flutter_template/data/counter_repository_impl.dart';
-import 'package:flutter_template/view/counter_screen.dart';
-import 'package:flutter_template/viewmodel/counter_viewmodel.dart';
-import 'package:flutter_template/viewmodel/language_viewmodel.dart';
-import 'package:flutter_template/viewmodel/theme_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Project imports:
+import 'package:flutter_template/data/counter_local_data_source.dart';
+import 'package:flutter_template/data/counter_repository_impl.dart';
+import 'package:flutter_template/view/counter_screen.dart';
+import 'package:flutter_template/viewmodel/app_language.dart';
+import 'package:flutter_template/viewmodel/app_theme.dart';
+import 'package:flutter_template/viewmodel/counter_viewmodel.dart';
+
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -25,9 +30,9 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   late SharedPreferences _prefs;
   late CounterViewModel _counterViewModel;
-  late LanguageViewModel _languageViewModel;
-  late ThemeViewModel _themeViewModel;
-  late Future<bool> _initialize;
+  final AppLanguage _appLanguage = AppLanguage();
+  final AppTheme _appTheme = AppTheme();
+  late Future<void> _initialize;
 
   @override
   void initState() {
@@ -36,23 +41,15 @@ class MyAppState extends State<MyApp> {
   }
 
   //Initialize App
-  Future<bool> _initApp() async {
+  Future<void> _initApp() async {
     _prefs = await SharedPreferences.getInstance();
-    CounterRepositoryImpl counterRepository =
+    final counterRepository =
         CounterRepositoryImpl(CounterLocalDataSource(_prefs));
     _counterViewModel = CounterViewModel(counterRepository);
     await _counterViewModel.init();
 
-    _languageViewModel = LanguageViewModel(
-        sharedPreferences: _prefs,
-        systemLocales: WidgetsBinding.instance.window.locales,
-        supportedLocales: AppLocalizations.supportedLocales);
-
-    _themeViewModel =
-        ThemeViewModel(sharedPreferences: _prefs, supportedThemes: {
-      "dark": ThemeData(brightness: Brightness.dark),
-      "light": ThemeData(brightness: Brightness.light)
-    });
+    await _appLanguage.loadLocale();
+    await _appTheme.loadTheme();
 
     return Future.value(true);
   }
@@ -60,55 +57,62 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      final breakpoint = Breakpoint.fromConstraints(constraints);
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final breakpoint = Breakpoint.fromConstraints(constraints);
 
-      if (breakpoint.columns <= 4) {
-        //Handset
-        return _createDesktopLayout();
-      } else if (breakpoint.columns <= 8) {
-        //Tablet
-        return _createDesktopLayout();
-      } else {
-        //Desktop
-        return _createDesktopLayout();
-      }
-    });
+        if (breakpoint.columns <= 4) {
+          //Handset
+          return _createDesktopLayout();
+        } else if (breakpoint.columns <= 8) {
+          //Tablet
+          return _createDesktopLayout();
+        } else {
+          //Desktop
+          return _createDesktopLayout();
+        }
+      },
+    );
   }
 
   Widget _createDesktopLayout() {
-    return FutureBuilder<bool>(
-        future: _initialize,
-        builder: (context, dataSnapshot) {
-          if (dataSnapshot.connectionState == ConnectionState.waiting) {
-            //初期ロード中のロード画面
-            return const MaterialApp(home: Center());
-          } else if (dataSnapshot.error != null) {
-            //初期ロードに失敗した場合に表示するエラー画面
-            return MaterialApp(
-                home: Center(child: Text(dataSnapshot.error.toString())));
-          } else {
-            //初期ロード完了
-            return MultiProvider(
-                providers: [
-                  ChangeNotifierProvider.value(value: _counterViewModel),
-                  ChangeNotifierProvider.value(value: _languageViewModel),
-                  ChangeNotifierProvider.value(value: _themeViewModel),
-                ],
-                child: Builder(
-                    builder: (context) => MaterialApp(
-                          onGenerateTitle: (context) =>
-                              AppLocalizations.of(context)!.appTitle,
-                          locale: Provider.of<LanguageViewModel>(context)
-                              .getLocale(),
-                          localizationsDelegates:
-                              AppLocalizations.localizationsDelegates,
-                          supportedLocales: AppLocalizations.supportedLocales,
-                          theme:
-                              Provider.of<ThemeViewModel>(context).getTheme(),
-                          home: const CounterScreen(),
-                        )));
-          }
-        });
+    return FutureBuilder<void>(
+      future: _initialize,
+      builder: (context, dataSnapshot) {
+        if (dataSnapshot.connectionState == ConnectionState.waiting) {
+          //初期ロード中のロード画面
+          return const MaterialApp(home: Scaffold(
+              body: Center(),),);
+        } else if (dataSnapshot.error != null) {
+          //初期ロードに失敗した場合に表示するエラーの画面
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: Text(dataSnapshot.error.toString()),
+              ),
+            ),
+          );
+        } else {
+          //初期ロード完了
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: _counterViewModel),
+              ChangeNotifierProvider.value(value: _appLanguage),
+              ChangeNotifierProvider.value(value: _appTheme),
+            ],
+            child: Builder(
+              builder: (context) => MaterialApp(
+                onGenerateTitle: (context) =>
+                    AppLocalizations.of(context)!.appTitle,
+                locale: Provider.of<AppLanguage>(context).appLocale,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                theme: Provider.of<AppTheme>(context).theme,
+                home: const CounterScreen(),
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 }
