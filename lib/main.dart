@@ -79,7 +79,7 @@ class MyAppState extends State<MyApp> {
       future: _initialize,
       builder: (context, dataSnapshot) {
         if (dataSnapshot.connectionState == ConnectionState.waiting) {
-          //初期ロード中のロード画面
+          //初期ロード中のロード中画面
           return const MaterialApp(home: Scaffold(
               body: Center(),),);
         } else if (dataSnapshot.error != null) {
