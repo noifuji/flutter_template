@@ -82,7 +82,7 @@ class MyAppState extends State<MyApp> {
           //初期ロード中のロード画面
           return const MaterialApp(home: Center());
         } else if (dataSnapshot.error != null) {
-          //初期ロードに失敗した場合に表示するエラー表示
+          //初期ロードに失敗した場合に表示するエラー画面
           return MaterialApp(
             home: Scaffold(
               body: Center(
