@@ -14,6 +14,8 @@ jobs:
       - uses: subosito/flutter-action@v2.3.0
         with:
           flutter-version: '3.13.3'
+          channel: 'stable'
+          cache: true
           
       - name: Install packages
         run: flutter pub get
