@@ -9,4 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name : Print Title of PR
-        run: echo The Title of your PR is ${{ github.event.pull_request.title }}
+        id: pr_title
+        run: echo ${{ github.event.pull_request.title }}
+        
+      - name : Print Title of PR
+        run: echo ${{ steps.pr_title.outputs }}
