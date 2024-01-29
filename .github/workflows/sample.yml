@@ -8,26 +8,14 @@ jobs:
   say_hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get Pull Request Number
-        id: pr
-        run: echo "::set-output name=pull_request_number::$(gh pr view --json number -q .number || echo "")"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Extract Issue References
-        id: extract_issues
-        run: echo "::set-output name=issues::$(echo "${{ steps.get_pr_description.outputs.description }}" | grep -oP '#\d+' | tr -d '#')"
-
-      - name: Get Issue Titles
-        id: get_issue_titles
+      - name: Get Issues Title
         run: |
-          ISSUES="${{ steps.extract_issues.outputs.issues }}"
-          for issue in $ISSUES; do
-            ISSUE_TITLE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/issues/$issue" | jq -r .title)
-            echo "Issue #$issue: $ISSUE_TITLE"
-          done
+          PR_NUMBER=$(gh pr view --json number -q '.number')
+          ISSUES_TITLE=$(gh issue view $PR_NUMBER --json title -q '.title')
+
+          echo "Issue Title: $ISSUES_TITLE"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
