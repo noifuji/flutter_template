@@ -14,7 +14,9 @@ jobs:
       - name: Get Pull Request Number
         id: pr
         run: echo "::set-output name=pull_request_number::$(gh pr view --json number -q .number || echo "")"
-        
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Extract Issue References
         id: extract_issues
         run: echo "::set-output name=issues::$(echo "${{ steps.get_pr_description.outputs.description }}" | grep -oP '#\d+' | tr -d '#')"
@@ -27,6 +29,5 @@ jobs:
             ISSUE_TITLE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/issues/$issue" | jq -r .title)
             echo "Issue #$issue: $ISSUE_TITLE"
           done
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
