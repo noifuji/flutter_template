@@ -10,7 +10,7 @@ jobs:
     steps:
       - name : Print Title of PR
         id: pr_title
-        run: echo ${{ github.event.pull_request.title }}
+        run: echo "pr_title=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
         
       - name : Print Title of PR
-        run: echo ${{ steps.pr_title.outputs }}
+        run: echo ${{ steps.pr_title.outputs.pr_title }}
