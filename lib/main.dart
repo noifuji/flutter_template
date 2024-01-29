@@ -50,8 +50,6 @@ class MyAppState extends State<MyApp> {
 
     await _appLanguage.loadLocale();
     await _appTheme.loadTheme();
-
-    return Future.value(true);
   }
 
   @override
@@ -61,13 +59,13 @@ class MyAppState extends State<MyApp> {
         final breakpoint = Breakpoint.fromConstraints(constraints);
 
         if (breakpoint.columns <= 4) {
-          //Handset
+          //Handsets
           return _createDesktopLayout();
         } else if (breakpoint.columns <= 8) {
-          //Tablet
+          //Tablets
           return _createDesktopLayout();
         } else {
-          //Desktop
+          //Desktops
           return _createDesktopLayout();
         }
       },
@@ -79,9 +77,12 @@ class MyAppState extends State<MyApp> {
       future: _initialize,
       builder: (context, dataSnapshot) {
         if (dataSnapshot.connectionState == ConnectionState.waiting) {
-          //初期ロード中のロード画面
-          return const MaterialApp(home: Scaffold(
-              body: Center(),),);
+          //初期ロード中のロード中画面
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(),
+            ),
+          );
         } else if (dataSnapshot.error != null) {
           //初期ロードに失敗した場合に表示するエラーの画面
           return MaterialApp(

@@ -6,7 +6,7 @@ clean:
 format: ## Formats the code
 	@echo "|--Formatting the code"
 	@fvm flutter pub run import_sorter:main
-	@dart format lib .
+	@fvm dart format lib .
 
 lint: ## Lints the code
 	@echo "|--Verifying code..."

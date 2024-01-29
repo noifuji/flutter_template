@@ -1,16 +1,35 @@
-# flutter_template
+## 導入ライブラリ
+### dependencies
+- breakpoint
+- provider
+- go_router
 
-A new Flutter project.
+### dev_dependencies
+- freezed
+- intl
+- import_sorter
 
-## Getting Started
+## 環境の分割
+dart-defines-from-fileを利用
+下記のファイルに環境ごとのキーなどをいれる
+dev.json(バージョン管理外)
+stg.json(バージョン管理外)
+prod.json(バージョン管理外)
 
-This project is a starting point for a Flutter application.
+## Flutterのバージョン管理
+fvm
 
-A few resources to get you started if this is your first Flutter project:
+## コマンドの短縮
+makefile
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Androidの署名
+key.propertiesを利用(バージョン管理外)
+debugビルド時は共通のdebug.keystoreを利用
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Lint
+analysis_options.yamlで厳しめに設定
+
+## Github Actions
+Androidの署名テクニック
+
+ああ
