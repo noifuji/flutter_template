@@ -16,6 +16,6 @@ jobs:
           PR_NUMBER=$(gh pr view --json number -q '.number')
           ISSUES_TITLE=$(gh issue view $PR_NUMBER --json title -q '.title')
 
-          echo "Issues Title: $ISSUES_TITLE"
+          echo "Issue Title: $ISSUES_TITLE"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
