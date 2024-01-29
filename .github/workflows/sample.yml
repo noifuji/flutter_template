@@ -8,14 +8,5 @@ jobs:
   say_hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Get Issues Title
-        run: |
-          PR_NUMBER=$(gh pr view --json number -q '.number')
-          ISSUES_TITLE=$(gh issue view $PR_NUMBER --json title -q '.title')
-
-          echo "Issue Title: $ISSUES_TITLE"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name : Print Title of PR
+        run: echo The Title of your PR is ${{ github.event.pull_request.title }}
