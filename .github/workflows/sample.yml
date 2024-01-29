@@ -1,32 +1,32 @@
 name: Sample
 
 on: 
-  workflow_dispatch:
+  pull_request:
+    types: [closed]
 
 jobs:
   say_hello:
     runs-on: ubuntu-latest
     steps:
-      - name: make artifact dir
-        run: mkdir /home/runner/work/artifact
-      - name: make file
-        run: echo hello > /home/runner/work/artifact/sample.txt
-      - name: Upload Android Release
-        uses: actions/upload-artifact@v4.3.0
-        with:
-          name: sample
-          path: /home/runner/work/artifact/sample.txt
-          
-  deploy:
-    needs: [say_hello]
-    runs-on: ubuntu-latest
-    steps:
-      # モジュールのダウンロード
-      - name: Download artifact
-        id: sample
-        uses: actions/download-artifact@v4
-        with:
-          name: sample
-          path: /home/runner/work
-      - name: print
-        run: cat ${{steps.sample.outputs.download-path}}/sample.txt
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get Pull Request Number
+        id: pr
+        run: echo "::set-output name=pull_request_number::$(gh pr view --json number -q .number || echo "")"
+        
+      - name: Extract Issue References
+        id: extract_issues
+        run: echo "::set-output name=issues::$(echo "${{ steps.get_pr_description.outputs.description }}" | grep -oP '#\d+' | tr -d '#')"
+
+      - name: Get Issue Titles
+        id: get_issue_titles
+        run: |
+          ISSUES="${{ steps.extract_issues.outputs.issues }}"
+          for issue in $ISSUES; do
+            ISSUE_TITLE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/issues/$issue" | jq -r .title)
+            echo "Issue #$issue: $ISSUE_TITLE"
+          done
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
