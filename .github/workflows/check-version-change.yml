@@ -1,0 +1,23 @@
+name: Checkout Previous Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  checkout_previous_version:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Get previous commit SHA
+      run: |
+        PREVIOUS_COMMIT=$(git rev-parse HEAD^)
+        echo "Previous commit SHA: $PREVIOUS_COMMIT"
+
+    - name: Checkout previous version
+      run: |
+        git checkout $PREVIOUS_COMMIT
